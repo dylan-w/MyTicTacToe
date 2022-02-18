@@ -10,6 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -20,28 +22,31 @@ fun TicTacToeBoard(theBoard: CharArray, onSelect: (Int) -> Boolean) {
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
-        for (x in 0..2) {
+        for (y in 0..2) {
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                for (y in 0..2) {
+                for (x in 0..2) {
                     Column(
                         modifier = Modifier
                             .weight(1F)
                             .border(BorderStroke(1.dp, Color.Black))
                             .aspectRatio(1F)
+                            .semantics(true) {
+                                contentDescription = "Row ${y + 1}, column ${x + 1}. Current value: ${theBoard[twoDimensionsToOneDimension(x, y)]}"
+                            }
                             .clickable(
                                 onClickLabel = "Click to select this space."
                             ) {
                                 Log.d("TicTacToeBoard", "Space selected: $x, $y")
-                                val valid = onSelect(x * 3 + y)
+                                val valid = onSelect(twoDimensionsToOneDimension(x, y))
                                 Log.d("TicTacToeBoard", "Valid space selected: $valid")
                             },
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = theBoard[x * 3 + y].toString(),
+                            text = theBoard[twoDimensionsToOneDimension(x, y)].toString(),
                             fontSize = 40.sp
                         )
                     }
@@ -50,6 +55,8 @@ fun TicTacToeBoard(theBoard: CharArray, onSelect: (Int) -> Boolean) {
         }
     }
 }
+
+private fun twoDimensionsToOneDimension(col: Int, row: Int) = row * 3 + col
 
 @Preview(showBackground = true)
 @Composable

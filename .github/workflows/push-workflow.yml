@@ -1,0 +1,26 @@
+name: Push Workflow
+
+on:
+  push:
+    paths-ignore:
+      - '**/*.md'
+
+jobs:
+  unit-tests:
+    name: Run Unit Tests
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Repository Code
+        id: checkout-repository
+        uses: actions/checkout@v2
+      
+      - name: Run Unit Tests
+        id: run-unit-tests
+        run: ./gradlew testDebugUnitTest
+      
+      - name: Upload Unit Test Reports
+        id: upload-unit-test-reports
+        uses: actions/upload-artifact@v2
+        with:
+          name: unit-test-reports
+          path: '**/TEST-*.xml'
